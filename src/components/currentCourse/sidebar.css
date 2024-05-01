@@ -1,0 +1,6 @@
+.sidebar {
+    overflow: auto;
+    position: -webkit-sticky;
+    position: sticky;
+    background-color: green;
+}
