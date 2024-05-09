@@ -40,7 +40,7 @@ function CourseCardsLayout() {
 }
 
 export const coursesLoader = async ({ params }) => {
-  const res = await fetch("http://localhost:8800/fetch/courses/all");
+  const res = await fetch("http://localhost:8800/fetch/course/all");
 
   return res.json();
 };

@@ -47,7 +47,7 @@ function CoursePageLayout() {
 export default CoursePageLayout
 export const FetchCourseDetailsLoader = async ({ params }) => {
   const { courseid } = params;
-  const res = await fetch('http://localhost:8800/fetch/courses/' + courseid);
+  const res = await fetch('http://localhost:8800/fetch/course/' + courseid);
   const data = await res.json();
   return data;
 };
