@@ -23,6 +23,7 @@ import { useLoaderData } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { loadCurrentCourseData } from '../redux/CurrentCourse'
 import { Outlet } from 'react-router-dom'
+import ENV from '../env'
 
 
 import Sidebar from '../components/currentCourse/Sidebar'
@@ -47,7 +48,7 @@ function CoursePageLayout() {
 export default CoursePageLayout
 export const FetchCourseDetailsLoader = async ({ params }) => {
   const { courseid } = params;
-  const res = await fetch('http://localhost:8800/fetch/course/' + courseid);
+  const res = await fetch(`${ENV.SERVER_URI}/fetch/course/` + courseid);
   const data = await res.json();
   return data;
 };

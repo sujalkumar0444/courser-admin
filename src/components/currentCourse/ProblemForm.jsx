@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import JsonUploadComponent from "./JsonUploadComponent";
+import ENV from "../../env";
 
 function ProblemForm(props) {
   let completeCourse = useSelector(
@@ -45,7 +46,7 @@ function ProblemForm(props) {
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:8800/add/problem',
+      url: `${ENV.SERVER_URI}/add/problem`,
       headers: { 
         'Content-Type': 'application/json'
       },

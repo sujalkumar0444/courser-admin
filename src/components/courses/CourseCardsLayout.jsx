@@ -1,5 +1,6 @@
 import React from "react";
 import { useLoaderData, useParams } from "react-router-dom";
+import ENV from "../../env"
 
 import CourseCard from "./CourseCard";
 
@@ -40,7 +41,8 @@ function CourseCardsLayout() {
 }
 
 export const coursesLoader = async ({ params }) => {
-  const res = await fetch("http://localhost:8800/fetch/course/all");
+  
+  const res = await fetch(`${ENV.SERVER_URI}/fetch/course/all`);
 
   return res.json();
 };
