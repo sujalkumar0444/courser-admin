@@ -18,7 +18,7 @@ function CourseCard( props ) {
         {`${props.coursedata.courseid} | ${props.coursedata.title}`}
       </h5>
       <p className="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
-        {props.coursedata.description}
+        {props.coursedata.description.slice(0,50)+"..."}
       </p>
     </div>
     <div className="p-6 pt-0">

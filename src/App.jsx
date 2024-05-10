@@ -17,6 +17,15 @@ import CoursePageLayout from "./layouts/CoursePageLayout";
 import ModuleContent from "./components/currentCourse/ModuleContent";
 import ContentForm from "./components/currentCourse/ContentForm";
 import ProblemForm from "./components/currentCourse/ProblemForm";
+import Displaylesson from "./components/currentCourse/Displaylesson";
+import DisplayProblem from "./components/currentCourse/DisplayProblem";
+import {FetchProblemLoader} from "./components/currentCourse/DisplayProblem";
+import {FetchLessonLoader} from "./components/currentCourse/Displaylesson";
+import JsonEditorComponent from "./components/JsonEditorComponent";
+import {EditLessonLoader} from "./components/currentCourse/EditLesson"
+import EditLesson from "./components/currentCourse/EditLesson";
+import EditProblem from "./components/currentCourse/EditProblem";
+import {EditProblemLoader} from "./components/currentCourse/EditProblem";
 
 //loaders
 import { coursesLoader } from "./components/courses/CourseCardsLayout";
@@ -44,10 +53,40 @@ const router = createBrowserRouter(
             }
           ></Route>
 
-          <Route path=":moduleid" element={<ModuleContent />} >
-            <Route index element={<><h1 className="flex items-center" >EDITOR AREA</h1></>} />
+          <Route path=":moduleid" element={<ModuleContent />}>
+            <Route
+              index
+              element={
+                <>
+                  <h1 className="flex items-center">EDITOR AREA</h1>
+                  {/* < JsonEditorComponent /> */}
+                </>
+              }
+            />
             <Route path="addLesson" element={<ContentForm />} />
             <Route path="addProblem" element={<ProblemForm />} />
+            <Route
+              path="TextPreview/:LessonId"
+              loader={FetchLessonLoader}
+              element={<Displaylesson/>}
+             
+            />
+            <Route path="ProblemPreview/:LessonId" 
+            loader={FetchProblemLoader}
+            element={<DisplayProblem/>} />
+
+            <Route
+            path="EditLesson/:LessonId"
+            element={<EditLesson/>}
+            loader={EditLessonLoader}
+            />
+            <Route
+            path="EditProblem/:LessonId"
+            loader={EditProblemLoader}
+            element={<EditProblem/>}
+            />
+            
+
           </Route>
         </Route>
       </Route>

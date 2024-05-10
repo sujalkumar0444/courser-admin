@@ -1,69 +1,69 @@
 import React from "react";
+import env from "../../env";
+import { useLoaderData, useParams } from "react-router-dom";
 import JoditEditor from "jodit-react";
 import { useState, useRef } from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import JsonEditorComponent from "./../JsonEditorComponent";
 import JsonUploadComponent from "./JsonUploadComponent";
-import ENV from "../../env";
-
-function ProblemForm(props) {
-  let completeCourse = useSelector(
-    (state) => state.CurrentCourse.currentCoursedata
-  );
-  // let courseid=completeCourse.courseid;
-  let { moduleid } = useParams();
-  // console.log("data from params");
-  // console.log(moduleid);
+function EditProblem() {
+  let { moduleid, LessonId } = useParams();
+  let data = useLoaderData();
+  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  // console.log(data)
+  // alert(JSON.stringify(data));
+  let lesson_title1 = data.lesson_title;
+  let lesson_points1 = data.lesson_points;
+  let problem_title = data.problem_title;
+  let problem_description1 = data.problem_id.problem_description;
+  // console.log(problem_description1)
+  // alert(problem_description1)
+  let sample_test_cases1 = data.problem_id.sample_test_cases;
+  let hidden_test_cases1 = data.problem_id.hidden_test_cases;
+  // alert(JSON.stringify(hidden_test_cases1))
 
   const editor = useRef(null);
-  const [content, setContent] = useState("");
-  const [lesson_title, setLesson_title] = useState("");
-  const [problem_points, setProblem_points] = useState("");
-  const [hidden_testcases, setHidden_testcases] = useState([]);
-  const [sample_testcases, setSample_testcases] = useState([]);
+  const [content, setContent] = useState(problem_description1);
+  // alert(content)
+  const [lesson_title, setLesson_title] = useState(lesson_title1);
+  const [problem_points, setProblem_points] = useState(lesson_points1);
+  const [hidden_testcases, setHidden_testcases] = useState(hidden_test_cases1);
+  // alert(JSON.stringify(hidden_testcases))
+  const [sample_testcases, setSample_testcases] = useState(sample_test_cases1);
 
-  function PostLesson(sample_testcases_data,hidden_testcases_data) {
-    console.log("sample testcase");
-    let sampletest=(sample_testcases_data);
-    console.log(sampletest);
-    // console.log("hidden testcase");
-    let hiddentest=(hidden_testcases_data);
-    // console.log(hiddentest);
-    console.log("lesson title", lesson_title);
-    console.log("problem  title", problem_points);
+  function PostLesson() {
     let data = JSON.stringify({
-      module_id: `${moduleid}`,
-      problem_title: `${lesson_title}`,
-      problem_points:problem_points,
+      moduleid: moduleid,
+      lessonid: LessonId,
+      lesson_title: lesson_title,
+      lesson_points: problem_points,
+      problem_title: lesson_title,
       problem_description: content,
-      sample_test_cases: sampletest,
-      hidden_test_cases: hiddentest,
+      sample_test_cases: sample_testcases,
+      hidden_test_cases: hidden_testcases,
     });
-    // console.log("data is :");
-    // alert(data);
-    alert(data)
+    alert(data);
 
     let config = {
-      method: 'post',
+      method: "post",
       maxBodyLength: Infinity,
-      url: `${ENV.SERVER_URI}/add/problem`,
-      headers: { 
-        'Content-Type': 'application/json'
+      url: `${env.SERVER_URI}/lesson/update/`,
+      headers: {
+        "Content-Type": "application/json",
       },
-      data : data
+      data: data,
     };
-    
-    axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      confirm("Problem Added Successfully");
-    })
-    .catch((error) => {
-      console.log(error);
-      confirm(error);
 
-    });
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        alert(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        alert(error);
+      });
   }
 
   return (
@@ -79,6 +79,7 @@ function ProblemForm(props) {
               class="block py-2.5 px-0 w-full text-sm text-black-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
+              defaultValue={lesson_title}
             />
             <label
               for="floating_phone"
@@ -96,6 +97,7 @@ function ProblemForm(props) {
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
+              defaultValue={problem_points}
             />
             <label
               for="floating_company"
@@ -104,14 +106,6 @@ function ProblemForm(props) {
               Problem Points
             </label>
           </div>
-        </div>
-        <div class="relative z-0 w-full mb-5 group">
-        <label class="block mb-2 text-lm font-medium text-black-900 " >Sample Test Cases</label>
-        <JsonUploadComponent setdamapledata={setSample_testcases}/>
-        </div>
-        <div class="relative z-0 w-full mb-5 group">
-        <label class="block mb-2 text-lm font-medium text-black-900" >Hidden Test Cases</label>
-        <JsonUploadComponent  setdamapledata={setHidden_testcases}/>
         </div>
         {/* <div class="relative z-0 w-full mb-5 group">
           
@@ -126,11 +120,33 @@ function ProblemForm(props) {
           }}
           className="mb-5"
         />
-        
+        <JsonEditorComponent
+          type="SampleTestCases"
+          data={sample_testcases}
+          filename="SampleTestCases"
+        />
+        <label class="block mb-2 text-lm font-medium text-black-900">
+          Hidden Test Cases
+        </label>
+        <JsonUploadComponent edit="true" setdamapledata={setSample_testcases} />
+
+        <JsonEditorComponent
+          type="HiddenTestcases"
+          data={hidden_testcases}
+          filename="HiddenTestcases"
+        />
+        <label class="block mb-2 text-lm font-medium text-black-900">
+          Hidden Test Cases
+        </label>
+        <JsonUploadComponent edit="true" setdamapledata={setHidden_testcases} />
+
         <button
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          onClick={(e)=>{e.preventDefault();PostLesson(sample_testcases,hidden_testcases)}}
+          onClick={(e) => {
+            e.preventDefault();
+            PostLesson();
+          }}
         >
           Submit
         </button>
@@ -138,5 +154,11 @@ function ProblemForm(props) {
     </div>
   );
 }
-
-export default ProblemForm;
+export const EditProblemLoader = async ({ params }) => {
+  const { LessonId } = params;
+  const res = await fetch(`${env.SERVER_URI}/lesson/preview/` + LessonId);
+  const data = await res.json();
+  // alert(data)
+  return data;
+};
+export default EditProblem;

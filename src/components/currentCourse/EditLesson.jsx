@@ -1,60 +1,50 @@
 import React from "react";
+import env from "../../env";
 import JoditEditor from "jodit-react";
 import { useState, useRef } from "react";
 import axios from "axios";
-import { useSelector ,useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import ENV from "../../env";
-
-
-
-
-
-
-
-function ContentForm(props) {
-  let completeCourse = useSelector((state) => state.CurrentCourse.currentCoursedata);
-  // let courseid=completeCourse.courseid;
-  let {moduleid}=useParams();
-  // console.log("data from params");
-  // console.log(moduleid);
-
+import { useLoaderData } from "react-router-dom";
+function EditLesson() {
+  let previous_data = useLoaderData();
+  let { LessonId, moduleid } = useParams();
+  // alert(JSON.stringify(previous_data))
+  let Content = previous_data.text_content;
+  let title = previous_data.lesson_title;
   const editor = useRef(null);
-  const [content, setContent] = useState("");
-  const [lesson_title, setLesson_title] = useState("");
-
+  const [content, setContent] = useState(Content);
+  const [lesson_title, setLesson_title] = useState(title);
   function PostLesson(e) {
     e.preventDefault();
-    console.log("PostLesson");
+    // alert("PostLesson");
     let data = JSON.stringify({
-    module_id: `${moduleid}`,
-    title: `${lesson_title}`,
-    content: content,
-  });
-  console.log(data);
-
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: `${ENV.SERVER_URI}/add/content`,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-
-  axios
-    .request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      confirm("Lesson Added Successfully");
-    })
-    .catch((error) => {
-      console.log(error);
-      confirm("Error in Adding Lesson");
+      moduleid: moduleid,
+      lessonid: LessonId,
+      lesson_title: lesson_title,
+      text_content: content,
     });
+    //    alert(data);
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${env.SERVER_URI}/lesson/update/`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
 
+    axios
+      .request(config)
+      .then((response) => {
+        alert(JSON.stringify(response.data));
+        
+      })
+      .catch((error) => {
+        alert(error);
+      });
   }
 
   return (
@@ -70,6 +60,7 @@ function ContentForm(props) {
               placeholder=" "
               required=""
               onChange={(e) => setLesson_title(e.target.value)}
+              defaultValue={lesson_title}
             />
             <label
               htmlFor="floating_phone"
@@ -90,7 +81,7 @@ function ContentForm(props) {
           }}
           className="mb-5"
         />
-        
+
         <button
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -102,5 +93,11 @@ function ContentForm(props) {
     </div>
   );
 }
-
-export default ContentForm;
+export const EditLessonLoader = async ({ params }) => {
+  const { LessonId } = params;
+  const res = await fetch(`${env.SERVER_URI}/lesson/preview/` + LessonId);
+  const data = await res.json();
+  // alert(data)
+  return data;
+};
+export default EditLesson;

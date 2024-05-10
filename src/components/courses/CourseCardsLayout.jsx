@@ -1,9 +1,58 @@
 import React from "react";
 import { useLoaderData, useParams } from "react-router-dom";
 import ENV from "../../env"
+import axios from "axios";
 
 import CourseCard from "./CourseCard";
+function addnewcourse(){
+  let course_id = prompt("Enter course id");
+  let course_tags=[]
+  let tags = prompt("Enter course tags");
+  while(tags){
+    course_tags.push(tags);
+    tags = prompt("Enter course tags");
+  }
+  let title = prompt("Enter course title");
+  while(!(title.length < 25)){
+    alert("title length should be less than 25 characters");
+    title = prompt("Enter course title");
+  }
+  let description = prompt("Enter course description");
 
+  let data = JSON.stringify({
+    "course_id": course_id,
+    "course_tags": course_tags,
+    "title": title,
+    "modules": [],
+    "description": description
+  });
+  // alert(data);
+  
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: `${ENV.SERVER_URI}/add/course`,
+    headers: { 
+      'Content-Type': 'application/json'
+    },
+    data : data
+  };
+  
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    alert(JSON.stringify(response.data));
+    window.location.reload();
+  })
+  .catch((error) => {
+    console.log(error);
+    alert(error);
+  });
+  
+
+
+
+}
 function CourseCardsLayout() {
   const allCourses = useLoaderData();
   // console.log(allCourses);
@@ -20,7 +69,8 @@ function CourseCardsLayout() {
 
       {/* <CourseCard /> */}
 
-      <div className="h-60 rounded-lg  flex justify-center items-center align-center bg-white shadow-md bg-clip-border rounded-xl ">
+      <div className="h-60 rounded-lg  flex justify-center items-center align-center bg-white shadow-md bg-clip-border rounded-xl "
+      onClick={addnewcourse}>
         <svg
           className="h-24 w-24 text-blue-600"
           fill="none"
